@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dratewka</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        class Color {
+            constructor(r, g, b) {
+                this.r = r;
+                this.g = g;
+                this.b = b;
+            }
+
+            toString() {
+                return 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
+            }
+        }
+
+        class TheImage {
+            constructor(path, backgroundColor) {
+                this.path = path;
+                this.backgroundColor = backgroundColor;
+            }
+
+            getDOMImage() {
+                var image = new Image(600, 375)
+                image.src = "img/" + this.path
+                image.style.background = this.backgroundColor.toString();
+                return image
+            }
+        }
+        class Possibilities {
+            constructor(ways, items = null) {
+                this.ways = ways;
+                this.items = items;
+            }
+
+            takeItem(itemId) {
+                this.items.splice(this.items.indexOf(itemId), 1);
+            }
+
+            calcNonUsableItem(itemsRepository) {
+                var items = 0;
+                for (var i = 0; i < this.items.length; i++) {
+                    if (itemsRepository.getItem(this.items[i]).isUsable) items++;
+                }
+                return items;
+            }
+        }
+        class TheLocation {
+            constructor(name, image, possibilities) {
+                this.name = name;
+                this.image = image;
+                this.possibilities = possibilities;
+            }
+        }
+
+        class Item {
+            constructor(id, displayedName, isUsable, name) {
+                this.id = id
+                this.displayedName = displayedName
+                this.isUsable = isUsable;
+                this.name = name
+            }
+        }
+
+        class ItemsRepository {
+            constructor() {
+                this.items = []
+                this.items[10] = new Item(10, "a KEY", true, "KEY")
+                this.items[11] = new Item(11, "an AXE", true, "AXE")
+                this.items[12] = new Item(12, "STICKS", true, "STICKS")
+                this.items[13] = new Item(13, "sheeplegs", false, "sheeplegs")
+                this.items[14] = new Item(14, "MUSHROOMS", true, "MUSHROOMS")
+                this.items[15] = new Item(15, "MONEY", true, "MONEY")
+                this.items[16] = new Item(16, "a BARREL", true, "BARREL")
+                this.items[17] = new Item(17, "a sheeptrunk", false, "sheeptrunk")
+                this.items[18] = new Item(18, "BERRIES", true, "BERRIES")
+                this.items[19] = new Item(19, "WOOL", true, "WOOL")
+                this.items[20] = new Item(20, "a sheepskin", false, "sheepskin")
+                this.items[21] = new Item(21, "a BAG", true, "BAG")
+                this.items[22] = new Item(22, "a RAG", true, "RAG")
+                this.items[23] = new Item(23, "a sheephead", false, "sheephead")
+                this.items[24] = new Item(24, "a SPADE", true, "SPADE")
+                this.items[25] = new Item(25, "SULPHUR", true, "SULPHUR")
+                this.items[26] = new Item(26, "a solid poison", false, "solid poison")
+                this.items[27] = new Item(27, "a BUCKET", true, "BUCKET")
+                this.items[28] = new Item(28, "TAR", true, "TAR")
+                this.items[29] = new Item(29, "a liquid poison", false, "liquid poison")
+                this.items[30] = new Item(30, "a dead dragon", false, "dead dragon")
+                this.items[31] = new Item(31, "a STONE", true, "STONE")
+                this.items[32] = new Item(32, "a FISH", true, "FISH")
+                this.items[33] = new Item(33, "a KNIFE", true, "KNIFE")
+                this.items[34] = new Item(34, "a DRAGONSKIN", true, "DRAGONSKIN")
+                this.items[35] = new Item(35, "a dragonskin SHOES", true, "SHOES")
+                this.items[36] = new Item(36, "a PRIZE", true, "PRIZE")
+                this.items[37] = new Item(37, "a SHEEP", true, "SHEEP")
+            }
+
+            getItem(id) {
+                return this.items[id]
+            }
+
+            findItemByName(name) {
+                for (var i = 0; i < this.items.length; i++) {
+                    if (this.items[i] != null && this.items[i].name == name) return this.items[i]
+                }
+                return null
+            }
+        }
+
+        class LocationsRepository {
+            constructor() {
+                this.locations = [
+                    [new TheLocation("You are inside a brimstone mine", new TheImage("11.gif", new Color(235, 211, 64)), new Possibilities(["EAST"])),
+                    new TheLocation("You are at the entrance to the mine", new TheImage("12.gif", new Color(89, 93, 87)), new Possibilities(["EAST", "WEST"])),
+                    new TheLocation("A hill", new TheImage("13.gif", new Color(117, 237, 243)), new Possibilities(["EAST", "WEST", "SOUTH"], [31])),
+                    new TheLocation("Some bushes", new TheImage("14.gif", new Color(202, 230, 51)), new Possibilities(["EAST", "WEST"])),
+                    new TheLocation("An old deserted hut", new TheImage("15.gif", new Color(220, 204, 61)), new Possibilities(["EAST", "WEST"], [27])),
+                    new TheLocation("The edge of a forest", new TheImage("16.gif", new Color(167, 245, 63)), new Possibilities(["EAST", "WEST"])),
+                    new TheLocation("A dark forest", new TheImage("17.gif", new Color(140, 253, 99)), new Possibilities(["SOUTH", "WEST"], [14])),],
+                    [new TheLocation("A man nearby making tar", new TheImage("21.gif", new Color(255, 190, 99)), new Possibilities(["SOUTH", "EAST"])),
+                    new TheLocation("A timber yard", new TheImage("22.gif", new Color(255, 190, 99)), new Possibilities(["EAST", "WEST", "SOUTH"])),
+                    new TheLocation("You are by a roadside shrine", new TheImage("23.gif", new Color(167, 245, 63)), new Possibilities(["EAST", "SOUTH", "WEST", "NORTH"], [10])),
+                    new TheLocation("You are by a small chapel", new TheImage("24.gif", new Color(212, 229, 36)), new Possibilities(["EAST", "WEST"])),
+                    new TheLocation("You are on a road leading to a wood", new TheImage("25.gif", new Color(167, 245, 63)), new Possibilities(["EAST", "WEST", "SOUTH"])),
+                    new TheLocation("You are in a forest", new TheImage("26 i 65.gif", new Color(167, 245, 63)), new Possibilities(["EAST", "WEST"])),
+                    new TheLocation("You are in a deep forest", new TheImage("27 i 67.gif", new Color(140, 253, 99)), new Possibilities(["WEST", "NORTH"], [18])),],
+                    [new TheLocation("You are by the Vistula River", new TheImage("31.gif", new Color(122, 232, 252)), new Possibilities(["EAST", "NORTH"])),
+                    new TheLocation("You are by the Vistula River", new TheImage("32.gif", new Color(140, 214, 255)), new Possibilities(["WEST", "NORTH"], [32])),
+                    new TheLocation("You are on a bridge over river", new TheImage("33.gif", new Color(108, 181, 242)), new Possibilities(["NORTH", "SOUTH"])),
+                    new TheLocation("You are by the old tavern", new TheImage("34.gif", new Color(255, 189, 117)), new Possibilities(["EAST"])),
+                    new TheLocation("You are at the town's end", new TheImage("35.gif", new Color(255, 190, 99)), new Possibilities(["WEST", "NORTH", "SOUTH"])),
+                    new TheLocation("You are in a butcher's shop", new TheImage("36.gif", new Color(255, 188, 102)), new Possibilities(["SOUTH"])),
+                    new TheLocation("You are in a cooper's house", new TheImage("37.gif", new Color(255, 188, 102)), new Possibilities(["SOUTH"])),],
+                    [new TheLocation("You are in the Wawel Castle", new TheImage("41.gif", new Color(255, 176, 141)), new Possibilities(["EAST"])),
+                    new TheLocation("You are inside a dragon's cave", new TheImage("42.gif", new Color(198, 205, 193)), new Possibilities(["EAST", "WEST"])),
+                    new TheLocation("A perfect place to set a trap", new TheImage("43.gif", new Color(255, 176, 141)), new Possibilities(["WEST", "NORTH"])),
+                    new TheLocation("You are by the water mill", new TheImage("44.gif", new Color(255, 190, 99)), new Possibilities(["EAST"], [21])),
+                    new TheLocation("You are at a main crossroad", new TheImage("45.gif", new Color(255, 190, 99)), new Possibilities(["EAST", "NORTH", "WEST", "SOUTH"])),
+                    new TheLocation("You are on a town street", new TheImage("46.gif", new Color(255, 190, 99)), new Possibilities(["EAST", "WEST", "NORTH"])),
+                    new TheLocation("You are in a frontyard of your house", new TheImage("47.gif", new Color(255, 190, 99)), new Possibilities(["WEST", "NORTH", "SOUTH"])),],
+                    [null, null, null,
+                        new TheLocation("You are by a swift stream", new TheImage("54.gif", new Color(108, 181, 242)), new Possibilities(["EAST"])),
+                        new TheLocation("You are on a street leading forest", new TheImage("55.gif", new Color(255, 190, 99)), new Possibilities(["WEST", "NORTH", "SOUTH"], [33])),
+                        new TheLocation("You are in a woodcutter's backyard", new TheImage("56.gif", new Color(255, 190, 99)), new Possibilities(["SOUTH"])),
+                        new TheLocation("You are in a shoemaker's house", new TheImage("57.gif", new Color(254, 194, 97)), new Possibilities(["NORTH"])),],
+                    [null, null, null,
+                        new TheLocation("You are in a bleak funeral house", new TheImage("64.gif", new Color(254, 194, 97)), new Possibilities(["EAST"], [24])),
+                        new TheLocation("You are on a path leading to the wood", new TheImage("26 i 65.gif", new Color(167, 245, 63)), new Possibilities(["EAST", "NORTH", "WEST"])),
+                        new TheLocation("You are at the edge of a forest", new TheImage("66.gif", new Color(167, 245, 63)), new Possibilities(["EAST", "NORTH", "WEST"])),
+                        new TheLocation("You are in a deep forest", new TheImage("27 i 67.gif", new Color(140, 253, 99)), new Possibilities(["WEST"])),]
+                ]
+            }
+            getLocation(x, y) {
+                return this.locations[x - 1][y - 1]
+            }
+        }
+
+        class Dependency {
+            constructor(condition, locationId, outputItemId, message, isMilestone = false) {
+                this.condition = condition;
+                this.locationId = locationId;
+                this.outputItemId = outputItemId;
+                this.message = message;
+                this.isMilestone = isMilestone;
+            }
+
+
+        }
+
+        class ItemFactory {
+            constructor() {
+                this.dependencies = [
+                    new Dependency((o) => { return o.have == 10 }, 56, 11, "You opened a tool shed and took an axe"),
+                    new Dependency((o) => { return o.have == 11 }, 67, 12, "You cut sticks for sheeplegs"),
+                    new Dependency((o) => { return o.have == 12 }, 43, 13, "You prepared legs for your fake sheep", true),
+                    new Dependency((o) => { return o.have == 14 }, 34, 15, "The tavern owner paid you money"),
+                    new Dependency((o) => { return o.have == 15 }, 37, 16, "The cooper sold you a new barrel"),
+                    new Dependency((o) => { return o.have == 16 }, 43, 17, "You made a nice sheeptrunk", true),
+                    new Dependency((o) => { return o.have == 18 }, 36, 19, "The butcher gave you wool"),
+                    new Dependency((o) => { return o.have == 19 }, 43, 20, "You prepared skin for your fake sheep", true),
+                    new Dependency((o) => { return o.have == 21 }, 57, 22, "You used your tools to make a rag"),
+                    new Dependency((o) => { return o.have == 22 }, 43, 23, "You made a fake sheephead", true),
+                    new Dependency((o) => { return o.have == 24 }, 11, 25, function () {
+                        console.log("hier")
+                        game.clear();
+                        game.display("You are digging...");
+                        setTimeout(() => {
+                            game.display("<br />and digging...")
+                            setTimeout(() => {
+                                game.display("<br />That's enough sulphur for you")
+                                setTimeout(() => {
+                                    game.defaultMessageTimeout();
+                                }, 1000)
+                            })
+                        }, 1000)
+                    }),
+                    new Dependency((o) => { return o.have == 25 }, 43, 26, "You prepared a solid poison", true),
+                    new Dependency((o) => { return o.have == 27 }, 21, 28, "You got a bucket full of tar"),
+                    new Dependency((o) => { return o.have == 28 }, 43, 29, "You prepared a liquid poison", true),
+                    new Dependency((o) => { return o.milestoneItemsCounter == 6 }, 43, 37, "Your fake sheep is full of poison and ready to be eaten by the dragon"),
+                    new Dependency((o) => { return o.have == 37 }, 43, 30, function () {
+                        console.log("hier")
+                        game.clear();
+                        game.display("The dragon noticed your gift...");
+                        setTimeout(() => {
+                            game.display("<br />The dragon ate your sheep and died!")
+                            game.dragonAlive = false
+                            var theLocation = game.locationsRepository.getLocation(game.player.x, game.player.y)
+                            theLocation.image.path = "dead.bmp"
+                            setTimeout(() => {
+                                game.defaultMessageTimeout();
+                            }, 1000)
+                        }, 1000)
+                    }),
+                    new Dependency((o) => { return o.have == 33 && o.dragonAlive == false }, 43, 34, "You cut a piece of dragon's skin"),
+                    new Dependency((o) => { return o.have == 34 }, 57, 35, "You used your tools to make shoes"),
+                    new Dependency((o) => { return o.have == 35 }, 41, 36, function()
+                    {
+                        game.clear();
+                        game.display("The King is impressed by your shoes")
+                        setTimeout(()=>{
+                            var img = new Image(1920, 1080)
+                            img.src="img/hoc.png"
+                            document.body.innerHTML=""
+                            document.body.append(img)
+                        }, 2000)
+                        game.defaultMessageTimeout();
+                        })
+                ];
+            }
+
+            findDependencyByCoords(x, y) {
+                var id = parseInt(x.toString() + y.toString())
+                var dependencyStack = []
+                for (var i = 0; i < this.dependencies.length; i++) {
+                    if (this.dependencies[i].locationId == id)
+                        dependencyStack.push(this.dependencies[i])
+                }
+                return dependencyStack;
+            }
+
+        }
+
+        class Player {
+            constructor(x, y) {
+                this.x = x
+                this.y = y
+
+                this.itemId = null;
+            }
+
+            goNorth() {
+                this.x -= 1
+            }
+
+            goSouth() {
+                this.x += 1
+            }
+
+            goEast() {
+                this.y += 1
+            }
+            goWest() {
+                this.y -= 1
+            }
+
+            takeItem(itemId) {
+                if ((typeof itemId != "number") && itemId != null)
+                    throw new Error("itemId have to be null or number")
+                this.itemId = itemId;
+            }
+        }
+
+        var game = {
+            player: new Player(4, 7),
+            locationsRepository: new LocationsRepository(),
+            itemsRepository: new ItemsRepository(),
+            itemFactory: new ItemFactory(),
+            milestoneItemsCounter: 0,
+            dragonAlive: true,
+            addOnDOMContentLoaded: function () {
+                document.addEventListener("DOMContentLoaded", () => {
+                    this.locationDiv = document.getElementsByClassName("location")[0]
+                    this.imageDiv = document.getElementById("image")
+                    this.optionsDiv = document.getElementById("options")
+                    this.decisionDiv = document.getElementById("decision")
+                    this.incentiveDiv = document.getElementsByClassName("incentive")[0]
+                    this.isUpper = true;
+                    this.isShiftPressed = false;
+                    this.init()
+                })
+            },
+            init: function () {
+                this.render()
+                document.addEventListener("mousedown", (e) => {
+                    e.preventDefault();
+                })
+
+            },
+            render: function () {
+                this.executedDependency = false
+                var actualLocation = this.locationsRepository.getLocation(this.player.x, this.player.y)
+                this.locationDiv.innerHTML = actualLocation.name
+                this.imageDiv.innerHTML = ""
+                this.imageDiv.append(actualLocation.image.getDOMImage())
+                var optionsContent = "You can go ";
+                var hideDivs = document.getElementsByClassName("hide");
+                for (var i = 0; i < hideDivs.length; i++)
+                    hideDivs[i].style.display = "block"
+                for (var i = 0; i < actualLocation.possibilities.ways.length; i++) {
+                    optionsContent += actualLocation.possibilities.ways[i] + ", "
+                    document.getElementsByClassName(actualLocation.possibilities.ways[i].toLowerCase()[0])[0]
+                        .style.display = "none"
+                }
+                optionsContent = optionsContent.slice(0, -2);
+                if (actualLocation.possibilities.items == null || actualLocation.possibilities.items.length == 0)
+                    optionsContent += "<br />You see nothing"
+                else {
+                    optionsContent += "<br />You see "
+                    for (var i = 0; i < actualLocation.possibilities.items.length; i++) {
+                        var item = this.itemsRepository.getItem(actualLocation.possibilities.items[i])
+                        optionsContent += item.displayedName + ", "
+                    }
+                    optionsContent = optionsContent.slice(0, -2);
+                }
+                if (this.player.itemId == null)
+                    optionsContent += "<br/>You are carrying nothing"
+                else
+                    optionsContent += "<br/>You are carrying " + this.itemsRepository.getItem(this.player.itemId).displayedName;
+                this.optionsDiv.innerHTML = optionsContent;
+                this.incentiveDiv.innerHTML = "What now? <input type='text' id='decision' spellcheck='false'>"
+                var caret = document.createElement("div");
+                caret.classList.add("caret")
+                this.incentiveDiv.append(caret)
+                this.decisionDiv = document.getElementById("decision")
+                this.decisionDiv.addEventListener("keyup", (e) => {
+                    if (e.key == "Shift") {
+                        this.isShiftPressed = false;
+                        this.isUpper = !this.isUpper
+                    }
+                })
+                this.decisionDiv.addEventListener("keydown", (e) => {
+                    if ((!this.isShiftPressed) && e.key == "Shift") {
+                        this.isShiftPressed = true;
+                        this.isUpper = !this.isUpper;
+                    }
+                    if (e.key == "CapsLock") this.isUpper = !this.isUpper;
+                    if ((e.key == "V" || e.key == "v") && e.currentTarget.value == "") {
+                        e.preventDefault()
+                        this.displayVocabulary()
+                    }
+                    if ((e.key == "G" || e.key == "g") && e.currentTarget.value == "") {
+                        e.preventDefault()
+                        this.displayGossip()
+                    }
+                    if (e.keyCode == 9) {
+                        e.preventDefault();
+                    }
+                    if (e.keyCode == 13) {
+                        switch (e.currentTarget.value) {
+                            case "NORTH":
+                            case "N":
+                                this.moveNorth();
+                                break;
+                            case "SOUTH":
+                            case "S":
+                                this.moveSouth();
+                                break;
+                            case "EAST":
+                            case "E":
+                                this.moveEast();
+                                break;
+                            case "WEST":
+                            case "W":
+                                this.moveWest();
+                                break;
+                            default:
+                                var dividedCommand = e.currentTarget.value.split(" ")
+                                if (dividedCommand.length <= 1) {
+                                    this.displayMessage("Try another word or V for vocabulary")
+                                    break;
+                                }
+                                var verb = dividedCommand.shift();
+                                var noun = dividedCommand.join(" ")
+                                this.executeItemsOperations(verb, noun)
+                                break;
+                        }
+
+                    }
+                    if (e.key.length == 1) {
+                        e.preventDefault();
+                        if (this.isUpper)
+                            e.currentTarget.value += e.key.toUpperCase();
+                        else
+                            e.currentTarget.value += e.key.toLowerCase();
+                    }
+
+                    setTimeout(() => {
+                        var len = this.decisionDiv.value.length;
+                        caret.style.left = (500 + 50 * len) + "px"
+                    }, 0)
+
+
+
+                })
+                this.decisionDiv.focus()
+                if (this.checkDependencyNextRender) {
+                    this.checkDependencyNextRender = false
+                    this.useItem();
+                }
+            },
+            executeItemsOperations: function (verb, noun) {
+                var possibilities = this.locationsRepository.getLocation(this.player.x, this.player.y).possibilities
+                var item = this.getItem(noun);
+                switch (verb) {
+                    case "TAKE":
+                    case "T":
+                        if (item == null) {
+                            this.displayMessage("There isn't anything like that here")
+                            break;
+                        }
+                        if (!item.isUsable) {
+                            this.displayMessage("You can't carry it")
+                            break;
+                        }
+                        if (this.player.itemId != null) {
+                            this.displayMessage("You are carrying something")
+                            break;
+                        }
+                        this.player.takeItem(item.id)
+                        possibilities.takeItem(item.id)
+                        this.displayMessage("You are taking " + item.displayedName)
+                        break;
+                    case "DROP":
+                    case "D":
+                        if (this.player.itemId == null) {
+                            this.displayMessage("You are not carrying anything")
+                            break;
+                        }
+                        if (possibilities.calcNonUsableItem(this.itemsRepository) >= 3) {
+                            this.displayMessage("You can't store any more here")
+                            break;
+                        }
+                        var theItem = this.itemsRepository.findItemByName(noun)
+                        if (theItem.id != this.player.itemId) {
+                            this.displayMessage("You are not carrying it")
+                            break;
+                        }
+                        this.displayMessage("You are about to drop " + theItem.displayedName)
+                        this.player.itemId = null;
+                        possibilities.items.push(theItem.id)
+                        break;
+                    case "USE":
+                    case "U":
+                        var theItem = this.itemsRepository.findItemByName(noun)
+                        if (this.player.itemId == null || theItem ==null||theItem.id != this.player.itemId) {
+                            this.displayMessage("You are not carrying anything like that")
+                            break;
+                        }
+                        this.useItem();
+                        break;
+                    default:
+                        this.displayMessage("Try another word or V for vocabulary")
+                        break;
+                }
+            },
+            useItem: function () {
+                var dependencies = this.itemFactory.findDependencyByCoords(this.player.x, this.player.y)
+                console.log(dependencies)
+                var flag = false;
+                for (var i = 0; i < dependencies.length; i++) {
+                    var dependency = dependencies[i]
+                    if (dependency.condition({
+                        have: this.player.itemId,
+                        milestoneItemsCounter: this.milestoneItemsCounter,
+                        dragonAlive: this.dragonAlive
+                    })) {
+                        flag = true;
+                        if (this.milestoneItemsCounter == 6) {
+                            var theLocation = this.locationsRepository.getLocation(this.player.x, this.player.y)
+                            theLocation.possibilities.items = []
+                        }
+                        if (dependency.message == "Your fake sheep is full of poison and ready to be eaten by the dragon"
+                            || dependency.outputItemId == "hello") {
+                                this.milestoneItemsCounter = 0;
+                            var item = this.itemsRepository.getItem(dependency.outputItemId)
+                            if (item == "hello") {
+                                this.displayMessage(dependency.message);
+                                return;
+                            }
+                            if (theLocation.possibilities.items == null) theLocation.possibilities.items = []
+                            this.player.itemId = dependency.outputItemId
+                            this.displayMessage(dependency.message)
+                            return;
+                        }
+                        if (this.executedDependency) {
+                            this.executedDependency = false;
+                            this.checkDependencyNextRender = true;
+                            return;
+                        }
+                        this.executedDependency = true;
+                        this.player.itemId = null;
+                        var item = this.itemsRepository.getItem(dependency.outputItemId)
+
+                        if (!item.isUsable) {
+                            if (dependency.isMilestone) this.milestoneItemsCounter++;
+                            var theLocation = this.locationsRepository.getLocation(this.player.x, this.player.y)
+                            var newItemId = dependency.outputItemId
+                            if (theLocation.possibilities.items == null) theLocation.possibilities.items = []
+                            theLocation.possibilities.items.push(newItemId)
+                        }
+                        else {
+                            this.player.itemId = dependency.outputItemId;
+                        }
+                        this.displayMessage(dependency.message)
+                    }
+
+                }
+                if (flag == false)
+                    this.displayMessage("Nothing happened")
+            },
+            getItem: function (noun) {
+                var items = this.locationsRepository.getLocation(this.player.x, this.player.y).possibilities.items
+                if (items != null) {
+                    for (var i = 0; i < items.length; i++) {
+                        if (this.itemsRepository.getItem(items[i]).name == noun) return this.itemsRepository.getItem(items[i])
+                    }
+                }
+                else return null
+            },
+            displayVocabulary: function () {
+                this.optionsDiv.innerHTML = "NORTH or N, SOUTH or S<br />" +
+                    "WEST or W, EAST or E<br />" +
+                    "TAKE (object) or T (object)<br />" +
+                    "DROP (object) or D (object)<br />" +
+                    "USE (object) or U (object)<br />" +
+                    "GOSSIPS or G, VOCABULARY or V<br />"
+                this.incentiveDiv.innerHTML = "Press any key <input type='text' id='decision'>"
+                this.decisionDiv = document.getElementById("decision")
+                this.decisionDiv.addEventListener("keydown", (e) => {
+                    this.render()
+                    e.preventDefault();
+                })
+                this.decisionDiv.focus()
+            },
+            displayGossip: function () {
+                this.optionsDiv.innerHTML = "The  woodcutter lost  his home key...<br />" +
+                    "The butcher likes fruit... The cooper<br />" +
+                    "is greedy... Dratewka plans to make a<br />" +
+                    "poisoned  bait for the dragon...  The<br />" +
+                    "tavern owner is buying food  from the<br />" +
+                    "pickers... Making a rag from a bag...<br />"
+                this.incentiveDiv.innerHTML = "Press any key <input type='text' id='decision'>"
+                this.decisionDiv = document.getElementById("decision")
+                this.decisionDiv.addEventListener("keydown", (e) => {
+                    this.render()
+                    e.preventDefault();
+                })
+                this.decisionDiv.focus()
+            },
+            moveNorth: function () {
+                if (this.locationsRepository.getLocation(this.player.x, this.player.y).possibilities.ways.includes("NORTH")) {
+                    this.player.goNorth();
+                    this.displayMessage("You are going north...")
+                }
+                else this.displayMessage("You can't go that way...")
+            },
+
+            moveSouth: function () {
+                if (this.locationsRepository.getLocation(this.player.x, this.player.y).possibilities.ways.includes("SOUTH")) {
+                    this.player.goSouth();
+                    this.displayMessage("You are going south...")
+                }
+                else this.displayMessage("You can't go that way...")
+            },
+
+            moveEast: function () {
+                if (this.locationsRepository.getLocation(this.player.x, this.player.y).possibilities.ways.includes("EAST")) {
+                    this.player.goEast();
+                    this.displayMessage("You are going east...")
+                }
+                else this.displayMessage("You can't go that way...")
+            },
+            moveWest: function () {
+                if (this.locationsRepository.getLocation(this.player.x, this.player.y).possibilities.ways.includes("WEST")) {
+                    if ((!(this.player.x == 4 && this.player.y == 2)) || this.dragonAlive == false) {
+                        this.player.goWest();
+                        this.displayMessage("You are going west...")
+                    }
+                    else {
+                        this.displayMessage(() => {
+                            this.clear()
+                            this.display("You can't go that way...")
+                            setTimeout(() => {
+                                this.display("<br />The dragon sleeps in a cave!")
+                                setTimeout(() => {
+                                    this.defaultMessageTimeout();
+                                }, 1000)
+                            }, 1000)
+                        })
+                    }
+
+                }
+                else this.displayMessage("You can't go that way...")
+
+            },
+            displayMessage: function (strOrFunc) {
+                if (typeof strOrFunc == "string") {
+                    console.log(strOrFunc)
+                    this.clear()
+                    this.display(strOrFunc);
+                    this.defaultMessageTimeout();
+                }
+                else {
+                    strOrFunc();
+                }
+            },
+            defaultMessageTimeout() {
+                setTimeout(() => {
+                    this.render();
+                    this.decisionDiv.value = ""
+                }, 1000)
+            },
+            display(message) {
+                var div = this.incentiveDiv
+                div.innerHTML += message
+            },
+            clear() {
+                var div = this.incentiveDiv
+                div.innerHTML = ""
+            }
+
+        }
+        game.addOnDOMContentLoaded();
+    </script>
+</head>
+
+<body>
+    <p class="location">You are by a roadside shrine</p>
+    <div id="image">
+        <img src="img/11.gif" />
+    </div>
+    <div id="compas">
+        <img src="img/kompas.bmp">
+        <div class="e hide"></div>
+        <div class="w hide"></div>
+        <div class="s hide"></div>
+        <div class="n hide"></div>
+    </div>
+    <div id="options">
+        You can go WEST, NORTH, EAST, SOUTH
+        <br /> You see nothing
+        <br /> You are carrying nothing
+    </div>
+    <p class="incentive">What now?
+        <input type="text" id="decision" spellcheck="false" />
+    </p>
+</body>
+
+</html>

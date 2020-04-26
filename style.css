@@ -1,0 +1,119 @@
+@font-face {
+    font-family: 'Dratewka';
+    src: url('fonts/PressStart2P.ttf')
+  }
+
+body
+{
+    background-color: #000000;
+    font-family: "Dratewka";
+    color: #aaaaaa;
+    font-size: 50px;
+    line-height: 1.1em;
+    cursor: none;
+    height: 100vh;
+    overflow: hidden;
+}
+body *
+{
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#image img
+{
+    margin: 10px;
+    border: 3px solid #ffffff;
+    width: 600px;
+    position: relative;
+    left: -10px;
+}
+
+.location
+{
+    margin:0;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+#image
+{
+    float: left;
+}
+
+#compas
+{
+    float: left;
+    position: relative;
+}
+
+#compas img
+{
+    width: 500px;
+}
+
+.hide
+{
+    background-color: black;
+    height: 30px;
+    width: 30px;
+    position: absolute;
+}
+
+.e
+{
+    right: 23px;
+    top: 65px;
+}
+
+.w
+{
+    left: 23px;
+    top: 65px;
+}
+
+.n
+{
+    top: 0;
+    left: 223px;
+}
+
+.s
+{
+    bottom: 5px;
+    left: 233px;
+}
+
+#decision
+{
+    background-color: inherit;
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    height: 50px;
+    font-size: 50px;
+    width: 1000px;
+    cursor: none;
+    color: transparent;
+    text-shadow: 0 0 0 #aaaaaa;
+    text-decoration: none;
+}
+#options
+{
+    clear: both;
+}
+
+#decision:focus
+{
+    outline: none;
+}
+
+.caret
+{
+    background-color: #aaaaaa;
+    width: 46px;
+    height: 46px;
+    position: relative;
+    top: -65px;
+    left: 500px;
+}
